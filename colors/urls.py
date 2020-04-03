@@ -16,6 +16,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from .views import Colores, Color
+
 urlpatterns = [
+    path('colores/', Colores.as_view(), name='colores'),
+    path('colores/<int:color_id>', Color.as_view(), name='color'),
     path('admin/', admin.site.urls),
 ]
