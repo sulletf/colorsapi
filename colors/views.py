@@ -59,9 +59,9 @@ class Colores(View):
 
         if request.META.get('HTTP_ACCEPT') in ['application/xml', 'text/xml']:
             template = loader.get_template('colors.xml')
-            return HttpResponse(template.render(d, request))
+            return HttpResponse(template.render(d, request), content_type='application/xml')
 
-        return JsonResponse(d, safe=False)
+        return JsonResponse(d, content_type='application/json', safe=False)
 
     def post(self, request):
         """POST request processing"""
@@ -99,18 +99,28 @@ class Colores(View):
             return JsonResponse({'error':mes}, status=422)
 
         # we return inserted color id
-        return JsonResponse({'color_id' : new_id})
+        return JsonResponse({'color_id' : new_id}, status=201)
 
 class Color(View):
     """View class handling API calls for color details"""
 
-    def get(self, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """GET request processing"""
+
+        accept_xml = request.META.get('HTTP_ACCEPT') in ['application/xml', 'text/xml']
 
         try:
             color_obj = ColorModel.objects.get(color_id=kwargs['color_id'])
         except ColorModel.DoesNotExist:
+            if accept_xml:
+                template = loader.get_template('color.xml')
+                return HttpResponse(template.render({}, request), content_type='application/xml', status=404)
+
             return JsonResponse({},status=404)
+
+        if accept_xml:
+            template = loader.get_template('color.xml')
+            return HttpResponse(template.render(color_obj.__dict__, request), content_type='application/xml')
 
         color_serialized_object = serializers.serialize('python', [color_obj,])
 

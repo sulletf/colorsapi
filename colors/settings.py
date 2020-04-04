@@ -79,14 +79,6 @@ DATABASES = {
          'ENGINE': 'django.db.backends.sqlite3',
          'NAME': os.path.join(BASE_DIR, 'colors.sqlite3'),
      }
-    #'default': {
-    #    'ENGINE': 'django.db.backends.mysql',
-    #    'NAME': 'sulletf$colors',
-    #    'USER': 'sulletf',
-    #    'PASSWORD': 'frederic0;',
-    #    'HOST': 'sulletf.mysql.pythonanywhere-services.com',
-    #    'PORT': '',
-    #}
 }
 
 
