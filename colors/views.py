@@ -42,9 +42,16 @@ class Colores(View):
             page = paginator.num_pages
             page_obj = paginator.get_page(page)
 
-        page_colors = page_obj.object_list
+        page_colors = [
+            {
+                'color_id':c.get('color_id'),
+                'name':c.get('name'),
+                'hex_code':c.get('hex_code')
+            } for c in list(page_obj.object_list.values())
+        ]
 
-        d = {'page': page, 'number_pages': paginator.num_pages, 'number_colors_per_page': number_colors_per_page, 'colors': list(page_colors.values())}
+        d = {'page': page, 'number_pages': paginator.num_pages,
+             'number_colors_per_page': number_colors_per_page, 'colors':page_colors}
 
         return JsonResponse(d, safe=False)
 
