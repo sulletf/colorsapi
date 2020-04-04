@@ -1,3 +1,4 @@
+from django.http import HttpResponse
 from django.http.response import JsonResponse
 from .models import Color as ColorModel
 
@@ -5,6 +6,9 @@ from django.views.generic import View
 from django.core.paginator import Paginator
 from django.core import serializers
 from django.db.utils import IntegrityError
+
+from django.template import loader
+
 
 import sys
 
@@ -51,7 +55,11 @@ class Colores(View):
         ]
 
         d = {'page': page, 'number_pages': paginator.num_pages,
-             'number_colors_per_page': number_colors_per_page, 'colors':page_colors}
+             'number_colors_per_page': number_colors_per_page, 'colors_list':page_colors}
+
+        if request.META.get('HTTP_ACCEPT') in ['application/xml', 'text/xml']:
+            template = loader.get_template('colors.xml')
+            return HttpResponse(template.render(d, request))
 
         return JsonResponse(d, safe=False)
 

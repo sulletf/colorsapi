@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<colors>
+  <page>{{ page }}</page>
+  <number_pages>{{ number_pages }}</number_pages>
+  <number_colors_per_page>{{ number_colors_per_page }}</number_colors_per_page>
+{% if colors_list %}
+  {% for color in colors_list %}
+  <color>
+    <color_id>{{ color.color_id }}</color_id>
+    <name>{{ color.name }}</name>
+    <hex_code>{{ color.hex_code }}</hex_code>
+  </color>
+  {% endfor %}
+{% endif %}
+</colors>
+
