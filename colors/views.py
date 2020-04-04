@@ -9,9 +9,15 @@ from django.db.utils import IntegrityError
 import sys
 
 class Colores(View):
+    """View class handling API calls for color listing"""
+
     def get(self,request):
+        """GET request processing"""
+
+        # Fetching all colors records
         color_list = ColorModel.objects.all().order_by('color_id')
 
+        # defaulting number of items per page to 10 if not provided in request or invalid
         try:
             number_colors_per_page = int(request.GET.get('colors_per_page'))
         except:
@@ -19,17 +25,20 @@ class Colores(View):
 
         paginator = Paginator(color_list, number_colors_per_page)
 
+        # defaulting page to display to 1 if invalid
         try:
             page = int(request.GET.get('page'))
         except:
             page = 1
         if page < 1 : page = 1
+        # defaulting page to display to last page number if provided page to display is greater than
+        # max page number
         if page > paginator.num_pages : page = paginator.num_pages
 
+        # defaulting page to display to last page number if page to display is irrelevant
         try:
             page_obj = paginator.get_page(page)
         except:
-            print('in exception')
             page = paginator.num_pages
             page_obj = paginator.get_page(page)
 
@@ -40,6 +49,8 @@ class Colores(View):
         return JsonResponse(d, safe=False)
 
     def post(self, request):
+        """POST request processing"""
+
         if not request.content_type == 'application/x-www-form-urlencoded':
             return JsonResponse({'error':'only application/x-www-form-urlencoded Content-Type header is accepted'}, status=415)
 
@@ -62,6 +73,7 @@ class Colores(View):
         if last_id is None : last_id = 0
         new_id  = last_id + 1
 
+        # inserting new color
         try:
             new_color = ColorModel(color_id = new_id, name = name, year = year, hex_code = hex_code, pantone = pantone)
             new_color.save()
@@ -71,10 +83,14 @@ class Colores(View):
             mes = "Unexpected error: {0}".format(sys.exc_info()[0])
             return JsonResponse({'error':mes}, status=422)
 
+        # we return inserted color id
         return JsonResponse({'color_id' : new_id})
 
 class Color(View):
+    """View class handling API calls for color details"""
+
     def get(self, *args, **kwargs):
+        """GET request processing"""
 
         try:
             color_obj = ColorModel.objects.get(color_id=kwargs['color_id'])
